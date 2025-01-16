@@ -1,6 +1,5 @@
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, redirect, url_for
 import os
-import json
 import csv
 
 app = Flask(__name__)
@@ -57,13 +56,18 @@ def save_data_to_csv_file(data):
         writer.writerow({"Email": email, "Subject": subject, "Message": message})
 
 
+@app.route("/thankyou")
+def thankyou():
+    return render_template("thankyou.html")
+
+
 @app.route("/submit", methods=["GET", "POST"])
 def submit():
     if request.method == "POST":
         try:
             data = request.form.to_dict()
             save_data_to_csv_file(data)
-            return render_template("thankyou.html")
+            return redirect(url_for("thankyou"))
         except Exception as exception:
             return {"Exception": exception}
 
